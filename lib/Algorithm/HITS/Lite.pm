@@ -15,7 +15,7 @@ use strict;
 use warnings;
 use Spiffy '-Base';
 use YAML;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 field '_result';
 field 'adjm';
@@ -47,19 +47,6 @@ sub sqsum {
     my $sum = 0;
     $sum += $_*$_ for(@_);
     return $sum;
-}
-
-sub normalize {
-    my @v = @_;
-    my $sq = sqrt(sqsum(@v));
-    my @nv = map {$_ / $sq } @v;
-    return @nv;
-}
-
-sub non_zeros {
-    my $v = 0;
-    $v+= $_?1:0 for(@_);
-    return $v;
 }
 
 =head2 iterate($k)
