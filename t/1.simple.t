@@ -1,14 +1,12 @@
 #!/usr/bin/perl
-
-use Test::More tests => 6;
-
 use Algorithm::HITS::Lite;
+use Test::More tests => 6;
 
 my $adjm = {
     alice => { bob => 1 },
 };
 
-my $ah = Algorithm::HITS::Lite->new($adjm);
+my $ah = Algorithm::HITS::Lite->new(network => $adjm);
 
 my ($hub,$auth) = $ah->iterate;
 
@@ -24,7 +22,7 @@ my $adjm2 = {
     bob => {}
 };
 
-$ah = Algorithm::HITS::Lite->new($adjm2);
+$ah = Algorithm::HITS::Lite->new(network => $adjm2);
 ($hub,$auth) = $ah->iterate(20);
 ok($auth->{bob} == 0);
 ok($hub->{alice} == 0);

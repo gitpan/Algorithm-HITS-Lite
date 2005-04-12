@@ -1,4 +1,6 @@
 package Algorithm::HITS::Lite;
+use Spiffy -Base;
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -6,48 +8,20 @@ Algorithm::HITS::Lite - HITS algorithm implementation not requiring PDL
 
 =head1 SYNOPSIS
 
-    my $ah = Algorithm::HITS::Lite->new($adjm);
+    my $ah = Algorithm::HITS::Lite->new(network => $adjm);
     my ($hub,$auth) = $ah->iterate(10);
 
 =cut
 
-use strict;
-use warnings;
-use Spiffy '-Base';
-use YAML;
-our $VERSION = '0.02';
-
-field '_result';
-field 'adjm';
-field 'nodes';
+field 'network';
+field nodes => -init => '$self->_collect_nodes';
 
 =head1 APIs
 
-=head2 new($adjm)
+=head2 new(network => $adjm)
 
-$adjm is the 'Adjency Matrix', hashref of hashref.
-
-=cut
-
-sub new {
-    my $adjm = shift;
-    $self->adjm($adjm);
-    my @nodes = $self->_collect_nodes($adjm);
-    $self->nodes(\@nodes);
-    return $self;
-}
-
-=head2 sqsum(@list)
-
-Return Square Sum of all numbers in @list.
-
-=cut
-
-sub sqsum {
-    my $sum = 0;
-    $sum += $_*$_ for(@_);
-    return $sum;
-}
+The required parameter $adjm is the 'Adjency Matrix' presentation of
+network, must be a hashref of hashref.
 
 =head2 iterate($k)
 
@@ -75,7 +49,7 @@ sub iterate {
 # Collect adjency matrix nodes.
 # (All hash keys)
 sub _collect_nodes {
-    my $adjm = $self->adjm;
+    my $adjm = $self->network;
     my %nodes;
     for my $k1 (keys %$adjm) {
 	$nodes{$k1} = 1;
@@ -85,7 +59,7 @@ sub _collect_nodes {
    }
     my @n = keys %nodes;
     $self->nodes(\@n);
-    return @n;
+    return [@n];
 }
 
 sub _build_z {
@@ -114,7 +88,7 @@ sub _normalize_xy {
 sub _op_T {
     my ($x,$y) = @_;
     my $nx;
-    my $g = $self->adjm;
+    my $g = $self->network;
     my $nodes = $self->nodes;
     for my $h (@$nodes) {
 	$nx->{$h} = 0;
@@ -128,7 +102,7 @@ sub _op_T {
 sub _op_O {
     my ($x,$y) = @_;;
     my $ny;
-    my $g = $self->adjm;
+    my $g = $self->network;
     my $nodes = $self->nodes;
     for my $p (@$nodes) {
 	$ny->{$p} = 0;
@@ -140,7 +114,21 @@ sub _op_O {
 }
 
 
-1;
+=cut
+
+=head2 sqsum(@list)
+
+Internally used, return Square Sum of all numbers in @list.
+
+=cut
+
+sub sqsum {
+    my $sum = 0;
+    $sum += $_*$_ for(@_);
+    return $sum;
+}
+
+
 
 =head1 SEE ALSO
 
