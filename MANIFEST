@@ -1,3 +1,5 @@
+Changes
+examples/simple
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -13,3 +15,5 @@ META.yml
 README
 t/0.use.t
 t/1.simple.t
+t/pod-coverage.t
+t/pod.t
